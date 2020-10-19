@@ -1,0 +1,3 @@
+change import of numpy to np
+change cimport of numpy to cnp
+

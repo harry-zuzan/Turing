@@ -1,7 +1,7 @@
 
 import numpy 
 cimport numpy
-
+import cython
 
  
 def reaction_diffusion_2d(double[:,:,:] arr, double[:,:] laplace,
@@ -13,6 +13,7 @@ def reaction_diffusion_2d(double[:,:,:] arr, double[:,:] laplace,
 
 
 
+@cython.boundscheck(False)
 def	reaction_diffusion_2d_iter(double[:,:,:] arr, double[:,:] laplace,
 	double diffa, double diffb, double feed, double kill):
 
@@ -33,6 +34,7 @@ def	reaction_diffusion_2d_iter(double[:,:,:] arr, double[:,:] laplace,
 			arr[1,i,j] += arr1[i,j]
 
 
+@cython.boundscheck(False)
 def reaction_a(double[:,:] arr, double[:,:,:] AB, double feed):
 	cdef int i,j
 
@@ -40,6 +42,7 @@ def reaction_a(double[:,:] arr, double[:,:,:] AB, double feed):
 		for j in range(arr.shape[1]):
 			arr[i,j] += feed*(1.0 - AB[0,i,j]) - AB[0,i,j]*AB[1,i,j]*AB[1,i,j]
 
+@cython.boundscheck(False)
 def reaction_b(double[:,:] arr, double[:,:,:] AB, double feed, double kill):
 	cdef int i,j
 	cdef double fkill = feed + kill
@@ -50,6 +53,7 @@ def reaction_b(double[:,:] arr, double[:,:,:] AB, double feed, double kill):
 
 
 
+@cython.boundscheck(False)
 def diffusion(double[:,:] B, double[:,:] A, double[:,:] L, double diff):
 	cdef int N = A.shape[0]
 	cdef int P = A.shape[1]
@@ -118,5 +122,4 @@ def diffusion(double[:,:] B, double[:,:] A, double[:,:] L, double diff):
 			v += L[2,0]*A[i+1,j-1] + L[2,1]*A[i+1,j] + L[2,2]*A[i+1,j+1]
 			B[i,j] = diff*v
 
-#	return B
 
