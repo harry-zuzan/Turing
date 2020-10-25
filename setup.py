@@ -9,8 +9,12 @@ numpy_inc = numpy.get_include()
 extensions = [
     Extension("turing.reaction_diffusion",
 			["turing/reaction_diffusion.pyx"],
-        include_dirs = [numpy_inc],
-		)
+        include_dirs = [numpy_inc]
+		),
+    Extension("turing.reaction_diffusion_parallel",
+			["turing/reaction_diffusion_parallel.pyx"],
+        include_dirs = [numpy_inc]
+		),
 	]
 
 setup(
