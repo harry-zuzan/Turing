@@ -13,6 +13,8 @@ extensions = [
 		),
     Extension("turing.reaction_diffusion_parallel",
 			["turing/reaction_diffusion_parallel.pyx"],
+        extra_compile_args=['-fopenmp'],
+        extra_link_args=['-fopenmp'],
         include_dirs = [numpy_inc]
 		),
 	]

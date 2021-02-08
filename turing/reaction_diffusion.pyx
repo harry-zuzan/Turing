@@ -1,26 +1,27 @@
 
-import numpy 
-cimport numpy
+import numpy as np
+cimport numpy as np
 import cython
 
  
 def reaction_diffusion_2d(double[:,:,:] arr, double[:,:] laplace,
-	double diffa, double diffb, double feed, double kill,niter=2**10):
+	double diffa, double diffb, double feed, double kill,int niter=2**10):
+	cdef int i
 
 	for i in range(niter):
 		reaction_diffusion_2d_iter(arr, laplace, diffa, diffb, feed, kill)
-		if not i % 16: print('iter', i)
+#		if not i % 16: print('iter', i)
 
 
 
 @cython.boundscheck(False)
-def	reaction_diffusion_2d_iter(double[:,:,:] arr, double[:,:] laplace,
+cdef reaction_diffusion_2d_iter(double[:,:,:] arr, double[:,:] laplace,
 	double diffa, double diffb, double feed, double kill):
 
 	cdef int i,j
 
-	cdef double[:,:] arr0 = numpy.zeros_like(arr[0,:,:])
-	cdef double[:,:] arr1 = numpy.zeros_like(arr[1,:,:])
+	cdef double[:,:] arr0 = np.zeros_like(arr[0,:,:])
+	cdef double[:,:] arr1 = np.zeros_like(arr[1,:,:])
 
 	diffusion(arr0, arr[0,:,:], laplace, diffa)
 	reaction_a(arr0, arr, feed)
@@ -35,7 +36,7 @@ def	reaction_diffusion_2d_iter(double[:,:,:] arr, double[:,:] laplace,
 
 
 @cython.boundscheck(False)
-def reaction_a(double[:,:] arr, double[:,:,:] AB, double feed):
+cdef reaction_a(double[:,:] arr, double[:,:,:] AB, double feed):
 	cdef int i,j
 
 	for i in range(arr.shape[0]):
@@ -43,7 +44,7 @@ def reaction_a(double[:,:] arr, double[:,:,:] AB, double feed):
 			arr[i,j] += feed*(1.0 - AB[0,i,j]) - AB[0,i,j]*AB[1,i,j]*AB[1,i,j]
 
 @cython.boundscheck(False)
-def reaction_b(double[:,:] arr, double[:,:,:] AB, double feed, double kill):
+cdef reaction_b(double[:,:] arr, double[:,:,:] AB, double feed, double kill):
 	cdef int i,j
 	cdef double fkill = feed + kill
 
@@ -54,7 +55,7 @@ def reaction_b(double[:,:] arr, double[:,:,:] AB, double feed, double kill):
 
 
 @cython.boundscheck(False)
-def diffusion(double[:,:] B, double[:,:] A, double[:,:] L, double diff):
+cdef diffusion(double[:,:] B, double[:,:] A, double[:,:] L, double diff):
 	cdef int N = A.shape[0]
 	cdef int P = A.shape[1]
 	cdef int i,j
